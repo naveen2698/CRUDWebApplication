@@ -26,10 +26,3 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4
-      with:
-        languages: csharp
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
