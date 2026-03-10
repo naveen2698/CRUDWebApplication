@@ -1,0 +1,27 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@address = https://localhost:7115
+
+GET {{address}}/books
+
+###
+POST {{address}}/books
+Content-Type: application/json
+
+{
+  "title": "5AM Club",
+  "price": 1300
+}
+
+###
+GET {{address}}/books/3c7b03d2-b717-42a5-b87c-4cb72834c16e
+
+###
+PUT {{address}}/books/3c7b03d2-b717-42a5-b87c-4cb72834c16e
+Content-Type: application/json
+{
+  "title": "5AM Club",
+  "price": 1300
+}
+
+###
+DELETE {{address}}/books/8acc0c40-4a25-4685-a42d-6755b2ca50f3
