@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "CodeAnalysisMCPServer": {
+      "type": "stdio",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "C:\\github\\CodeAnalysisMCP\\src\\CodeAnalysis.Mcp\\CodeAnalysis.Mcp.csproj"
+      ]
+    }
+  },
+  "inputs": []
+}
