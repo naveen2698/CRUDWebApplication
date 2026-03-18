@@ -1,9 +1,20 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
 @address = https://localhost:7115
 
+### 1. Hello World - smoke test
+GET {{address}}/
+
+### 2. List books (empty or seeded)
 GET {{address}}/books
 
-###
+### 3. List books with pagination (skip & take)
+GET {{address}}/books?skip=0&take=10
+
+### 4. List books with negative skip (should clamp to 0)
+GET {{address}}/books?skip=-5&take=5
+
+### 5. Create a new book
+# @name createBook
 POST {{address}}/books
 Content-Type: application/json
 
@@ -12,16 +23,44 @@ Content-Type: application/json
   "price": 1300
 }
 
-###
-GET {{address}}/books/3c7b03d2-b717-42a5-b87c-4cb72834c16e
+### 6. Get the created book by id
+GET {{address}}/books/{{createBook.response.body.$.id}}
 
-###
-PUT {{address}}/books/3c7b03d2-b717-42a5-b87c-4cb72834c16e
+### 7. Update the created book
+PUT {{address}}/books/{{createBook.response.body.$.id}}
 Content-Type: application/json
+
 {
-  "title": "5AM Club",
-  "price": 1300
+  "title": "Monk Who Sold His Ferrari",
+  "price": 1500
 }
 
-###
-DELETE {{address}}/books/8acc0c40-4a25-4685-a42d-6755b2ca50f3
+### 8. Verify the update
+GET {{address}}/books/{{createBook.response.body.$.id}}
+
+### 9. Delete the created book
+DELETE {{address}}/books/{{createBook.response.body.$.id}}
+
+### 10. Verify deletion (should return 404)
+GET {{address}}/books/{{createBook.response.body.$.id}}
+
+### 11. Get a non-existent book (should return 404)
+GET {{address}}/books/00000000-0000-0000-0000-000000000000
+
+### 12. Create with missing title (should return 400 - validation)
+POST {{address}}/books
+Content-Type: application/json
+
+{
+  "title": "",
+  "price": 100
+}
+
+### 13. Create with negative price (should return 400 - validation)
+POST {{address}}/books
+Content-Type: application/json
+
+{
+  "title": "Test Book",
+  "price": -10
+}

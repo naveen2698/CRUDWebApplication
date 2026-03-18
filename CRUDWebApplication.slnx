@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/.vscode/">
-    <File Path="mcp.json" />
+    <File Path=".mcp.json" />
   </Folder>
   <Project Path="CRUDWebApplication/CRUDWebApplication.csproj" />
 </Solution>

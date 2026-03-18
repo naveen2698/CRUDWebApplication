@@ -1,12 +1,12 @@
 {
-  "servers": {
-    "CodeAnalysisMCPServer": {
+  "servers": {    
+    "MCPServer": {
       "type": "stdio",
       "command": "dotnet",
       "args": [
         "run",
         "--project",
-        "C:\\github\\CodeAnalysisMCP\\src\\CodeAnalysis.Mcp\\CodeAnalysis.Mcp.csproj"
+        "C:\\github\\McpServer\\McpServer.Mcp\\McpServer.Mcp.csproj"
       ]
     }
   },

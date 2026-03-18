@@ -1,6 +1,5 @@
 ﻿using CRUDWebApplication.Models;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
 namespace CRUDWebApplication.Data
 {
@@ -11,7 +10,7 @@ namespace CRUDWebApplication.Data
         }
         public DbSet<Book> Books { get; set; }
 
-       protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Book>(entity =>

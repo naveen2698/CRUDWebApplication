@@ -9,7 +9,7 @@ namespace CRUDWebApplication.Models
         [Required]
         public required string Title { get; set; }
 
-        [Required]
+        [Range(0, (double)decimal.MaxValue)]
         public decimal Price { get; set; }
     }
 }
