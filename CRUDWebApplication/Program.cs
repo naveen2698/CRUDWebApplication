@@ -12,9 +12,12 @@ namespace CRUDWebApplication
 
             builder.Services.AddValidation();
 
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(connectionString);
             });
 
             var app = builder.Build();
@@ -37,34 +40,35 @@ namespace CRUDWebApplication
 
             app.MapGet("/", () => "Hello World!");
 
-            app.MapPost("/books", async (BookInput input, AppDbContext dbContext) =>
+            app.MapPost("/books", async (BookInput input, AppDbContext dbContext, CancellationToken cancellationToken) =>
             {
                 var book = new Book { Title = input.Title, Price = input.Price };
                 dbContext.Books.Add(book);
-                await dbContext.SaveChangesAsync();
+                await dbContext.SaveChangesAsync(cancellationToken);
                 return Results.CreatedAtRoute("GetBookById", new { id = book.Id }, book);
             });
 
-            app.MapGet("/books/{id}", async (Guid id, AppDbContext dbContext) =>
+            app.MapGet("/books/{id}", async (Guid id, AppDbContext dbContext, CancellationToken cancellationToken) =>
             {
-                return await dbContext.Books.FindAsync(id) is Book book ? Results.Ok(book) : Results.NotFound();
+                return await dbContext.Books.FindAsync([id], cancellationToken) is Book book ? Results.Ok(book) : Results.NotFound();
             }).WithName("GetBookById");
 
-            app.MapGet("/books", async (int? skip, int? take, AppDbContext dbContext) =>
+            app.MapGet("/books", async (int? skip, int? take, AppDbContext dbContext, CancellationToken cancellationToken) =>
             {
                 var skipValue = Math.Max(0, skip ?? 0);
                 var takeValue = Math.Clamp(take ?? 50, 1, 100);
                 var books = await dbContext.Books
+                    .AsNoTracking()
                     .OrderBy(b => b.Id)
                     .Skip(skipValue)
                     .Take(takeValue)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
                 return Results.Ok(books);
             });
 
-            app.MapPut("/books/{id}", async (Guid id, BookInput input, AppDbContext dbContext) =>
+            app.MapPut("/books/{id}", async (Guid id, BookInput input, AppDbContext dbContext, CancellationToken cancellationToken) =>
             {
-                var book = await dbContext.Books.FindAsync(id);
+                var book = await dbContext.Books.FindAsync([id], cancellationToken);
                 if (book is null)
                 {
                     return Results.NotFound();
@@ -73,7 +77,7 @@ namespace CRUDWebApplication
                 book.Price = input.Price;
                 try
                 {
-                    await dbContext.SaveChangesAsync();
+                    await dbContext.SaveChangesAsync(cancellationToken);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -82,9 +86,9 @@ namespace CRUDWebApplication
                 return Results.NoContent();
             });
 
-            app.MapDelete("/books/{id}", async (Guid id, AppDbContext dbContext) =>
+            app.MapDelete("/books/{id}", async (Guid id, AppDbContext dbContext, CancellationToken cancellationToken) =>
             {
-                var book = await dbContext.Books.FindAsync(id);
+                var book = await dbContext.Books.FindAsync([id], cancellationToken);
                 if (book is null)
                 {
                     return Results.NotFound();
@@ -92,7 +96,7 @@ namespace CRUDWebApplication
                 dbContext.Books.Remove(book);
                 try
                 {
-                    await dbContext.SaveChangesAsync();
+                    await dbContext.SaveChangesAsync(cancellationToken);
                 }
                 catch (DbUpdateConcurrencyException)
                 {

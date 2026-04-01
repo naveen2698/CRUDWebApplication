@@ -11,5 +11,8 @@ namespace CRUDWebApplication.Models
 
         [Range(0, (double)decimal.MaxValue)]
         public decimal Price { get; set; }
+
+        [Timestamp]
+        public byte[]? RowVersion { get; set; }
     }
 }
